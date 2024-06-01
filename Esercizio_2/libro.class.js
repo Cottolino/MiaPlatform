@@ -19,12 +19,19 @@ class LibroCollection extends events.EventEmitter {
     constructor() {
         super();
         this.collection.push(new Libro('Il Signore degli Anelli', 'J.R.R. Tolkien'));
+        this.collection.push(new Libro('Il Signore degli Anelli', 'J.R.R. Tolkien'));
+        this.collection.push(new Libro('Il Signore degli Anelli', 'J.R.R. Tolkien'));
+        
+        
     }
 
     //Da eseguire prima delle azioni
     fetchCollection()
     {
         //API per recuperare la collection
+        this.collection.push(new Libro('Beppino', 'Giorgio Docente'));
+        //Fine API
+        
         this.emit('fetchCollection', this.collection);
     }
     //Da eseguire dopo le azioni
@@ -90,3 +97,4 @@ class actionLib extends events.EventEmitter {
     }
 }
 
+module.exports = { LibroCollection, actionLib };
