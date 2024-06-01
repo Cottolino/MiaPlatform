@@ -1,4 +1,6 @@
 const { EventEmitter } = require('events');
+import { EventEmitter } from './../../../powersolutions2/includes/ace/ace.d';
+
 
 class Lib extends EventEmitter {
     
