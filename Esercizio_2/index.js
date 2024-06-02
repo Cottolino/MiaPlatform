@@ -27,7 +27,6 @@ app.get('/libri', (req, res) => {
     libroCollection.fetchCollection();
 
     libroCollection.on('fetchCollection', (collection) => {
-        libroCollection.collection = collection;
         console.log(libroCollection.collection);
         console.log('fetchCollection');
     }); 
