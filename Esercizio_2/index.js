@@ -19,7 +19,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
+    libroCollection.ping();
 });
+
+// libroCollection.test();
+// libroCollection.testInsert();
+
 
 
 //Microservizio per la gestione dei libri
@@ -30,7 +35,10 @@ app.get('/libri', (req, res) => {
         console.log(libroCollection.collection);
         console.log('fetchCollection');
     }); 
-    res.send(libroCollection.collection);
+    
+    setTimeout(() => {  
+        res.send(libroCollection.collection);
+    }, 3000);
 });
 
 app.get('/test', (req, res) => {

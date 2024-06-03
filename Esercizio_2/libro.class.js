@@ -1,4 +1,6 @@
 const events = require('events');   
+const e = require('express');
+const { MongoClient } = require('mongodb');
 
 class Libro
 {
@@ -15,28 +17,73 @@ class Libro
 class LibroCollection extends events.EventEmitter {
     
     collection = [];
+
+    dbLibro;
+    collectionLibro;
+
+
     
     constructor() {
+
         super();
-        this.collection.push(new Libro('Il Signore degli Anelli', 'J.R.R. Tolkien'));
-        this.collection.push(new Libro('Il Signore degli Anelli', 'J.R.R. Tolkien'));
-        this.collection.push(new Libro('Il Signore degli Anelli', 'J.R.R. Tolkien'));
+
+        this.dbURI = 'mongodb+srv://giuseppe2:db_123@maestro-node.kumsrrs.mongodb.net/?retryWrites=true&w=majority&appName=maestro-node';
+        this.client = new MongoClient(this.dbURI);
+
+        this.run().catch(err => console.log('ErroreConnessione'+ err));
         
-        
+    }
+    //Stampa di prova
+    test()
+    {
+        console.log('Test');
+        console.log(this.client);
+    }
+
+    //Test Inserimento
+    testInsert()
+    {
+        this.collectionLibro.insertOne({ titolo: 'Giuseppe', autore: 'Cottone' });
+        console.log('Inserito');
+    }
+
+    //Controllo connessione
+    async ping()
+    {
+        let pingResult = await this.client.db().admin().ping();
+        if(pingResult.ok == 1)
+        {
+            console.log('Connesso');
+        }
+        else
+        {
+            console.log('Non Connesso');
+        }
+    }
+
+    //Connessione al database
+    async run()
+    {
+        this.client.connect();
+        this.dbLibro = this.client.db('MiaLibri');
+        this.collectionLibro = this.dbLibro.collection('libri');
+
     }
 
     //Da eseguire prima delle azioni
-    fetchCollection()
+    async fetchCollection()
     {
-        //API per recuperare la collection
-        this.collection.push(new Libro('Beppino', 'Giorgio Docente'));
-        //Fine API
+        //API esterna
+
+        //API interna
+        const cursor = await this.collectionLibro.find();
+        this.collection = await cursor.toArray();
         
         this.emit('fetchCollection', this.collection);
     }
     //Da eseguire dopo le azioni
     saveCollection()
-    {
+    { 
         //API per salvare la collection
         this.emit('saveCollection', this.collection);
     }
@@ -96,5 +143,6 @@ class actionLib extends events.EventEmitter {
         this.emit('info', this.libro);
     }
 }
+
 
 module.exports = { LibroCollection, actionLib };
