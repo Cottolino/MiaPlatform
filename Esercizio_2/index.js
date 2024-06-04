@@ -41,6 +41,59 @@ app.get('/libri', (req, res) => {
     }, 3000);
 });
 
+app.get('/salva-libri', (req, res) => {
+    libroCollection.saveCollection();
+
+    libroCollection.on('saveCollection', (collection) => {
+        console.log('collection Aggiornata');
+    });
+
+    res.send('Libri Salvati');
+});
+
+app.get('/libro', (req, res) => {
+    var libro;
+    libroCollection.getLibro('Giuseppe');
+
+    libroCollection.on('getlibro', (collection) => {
+        libro = collection;
+        console.log(libro);
+        console.log('getlibro');
+    });
+
+    setTimeout(() => {
+        res.send(libro);
+    }, 3000);
+
+});
+
+app.get('/add-libro', (req, res) => {
+    libroCollection.addLibro({
+        titolo: 'AddLibro',
+        autore: 'AddLibro'
+    });
+
+    libroCollection.on('addLibro', (collection) => {
+        console.log('Libro Aggiunto');
+    });
+
+    setTimeout(() => {
+        res.send('Libro Aggiunto!');
+    }, 3000);
+
+});
+app.get('/del-libro', (req, res) => {
+    libroCollection.delLibro({
+        titolo: 'Giuseppe',
+    });
+    console.log('Libro Eliminato');
+    
+    setTimeout(() => {
+        res.send('Libro Eliminato!');
+    }, 3000);
+
+});
+
 app.get('/test', (req, res) => {
     res.send('Test');
 });

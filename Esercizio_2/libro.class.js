@@ -1,6 +1,6 @@
 const events = require('events');   
 const e = require('express');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 
 class Libro
 {
@@ -26,7 +26,6 @@ class LibroCollection extends events.EventEmitter {
     constructor() {
 
         super();
-
         this.dbURI = 'mongodb+srv://giuseppe2:db_123@maestro-node.kumsrrs.mongodb.net/?retryWrites=true&w=majority&appName=maestro-node';
         this.client = new MongoClient(this.dbURI);
 
@@ -71,6 +70,7 @@ class LibroCollection extends events.EventEmitter {
     }
 
     //Da eseguire prima delle azioni
+    //Ok!
     async fetchCollection()
     {
         //API esterna
@@ -82,29 +82,42 @@ class LibroCollection extends events.EventEmitter {
         this.emit('fetchCollection', this.collection);
     }
     //Da eseguire dopo le azioni
+    //Ok!
     saveCollection()
     { 
         //API per salvare la collection
+
+        //API interna
+        this.collectionLibro.find({}).forEach(libro => {
+            this.collectionLibro.updateOne({_id: libro._id},{$set: {titolo: libro.titolo, autore: libro.autore, prestito: libro.prestito, reso: libro.reso}});
+        });
         this.emit('saveCollection', this.collection);
     }
-    getLibro(titolo) 
+    //Ok!
+    async getLibro(titolo) 
     {
-        this.emit('getlibro', { titolo: 'Il Signore degli Anelli', autore: 'J.R.R. Tolkien' });
+        const articolo = await this.collectionLibro.find({titolo: titolo});
+        const art = await articolo.toArray();
+        this.emit('getlibro', art);
     }
     getLibri()
     {
         this.emit('getlibri', this.collection);
     }
+    //Ok!
     addLibro(libro)
     {
+        this.collectionLibro.insertOne(libro);
         this.emit('addLibro', libro);
     }
     modLibro(libro) 
     {
         this.emit('modLibro', libro);
     }
+    //Ok!
     delLibro(libro)
     {
+        this.collectionLibro.deleteOne(libro);
         this.emit('delLibro', libro);
     }
 
