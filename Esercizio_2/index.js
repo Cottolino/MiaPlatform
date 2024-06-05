@@ -6,13 +6,32 @@
 //API GATEWAY
 const express = require('express');
 const app = express();
+const { MongoClient } = require('mongodb');
+const client = new MongoClient('mongodb+srv://giuseppe2:db_123@maestro-node.kumsrrs.mongodb.net/?retryWrites=true&w=majority&appName=maestro-node');
 
 const bodyParser = require('body-parser');
 const { LibroCollection, actionLib } = require('./libro.class');
 
 const libroCollection = new LibroCollection();
+const libro = new actionLib();
 
 const port = 3000;
+
+//TEST SESSION
+const { v4: uuidv4 } = require('uuid');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+
+app.use(session({
+    secret: 'miaChiaveSegreta123',
+    resave: false,
+    saveUninitialized: true,
+    //secure: true: http -> https
+    cookie: { secure: false },
+    genid: () =>  uuidv4() ,
+    store: MongoStore.create({ client: client, dbName: 'MiaLibri' })
+  }));
+//
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -25,10 +44,29 @@ app.listen(port, () => {
 // libroCollection.test();
 // libroCollection.testInsert();
 
-
+app.get('/info', (req, res) => {
+    console.log(req.session.isLogged);
+    res.send('Info');
+});
+app.get('/login', (req,res) => {
+    console.log(req.session.id);
+    req.session.isLogged = true;
+    res.send();
+});
+app.get('/logout', (req,res)=> {
+    req.session.destroy((err) => console.log(err));
+    res.send();
+});
 
 //Microservizio per la gestione dei libri
 app.get('/libri', (req, res) => {
+    if(req.session.isLogged){
+        console.log('Sei loggato');
+    }
+    else{
+        console.log('Non sei loggato');
+    }
+
     libroCollection.fetchCollection();
 
     libroCollection.on('fetchCollection', (collection) => {
@@ -57,8 +95,6 @@ app.get('/libro', (req, res) => {
 
     libroCollection.on('getlibro', (collection) => {
         libro = collection;
-        console.log(libro);
-        console.log('getlibro');
     });
 
     setTimeout(() => {
@@ -69,8 +105,10 @@ app.get('/libro', (req, res) => {
 
 app.get('/add-libro', (req, res) => {
     libroCollection.addLibro({
-        titolo: 'AddLibro',
-        autore: 'AddLibro'
+        titolo: 'AddLibro2',
+        autore: 'AddLibro2',
+        prestito: false,
+        reso: false
     });
 
     libroCollection.on('addLibro', (collection) => {
@@ -86,7 +124,10 @@ app.get('/del-libro', (req, res) => {
     libroCollection.delLibro({
         titolo: 'Giuseppe',
     });
-    console.log('Libro Eliminato');
+
+    libroCollection.on('delLibro', (collection) => {
+        console.log('Libro Eliminato');
+    });
     
     setTimeout(() => {
         res.send('Libro Eliminato!');
@@ -94,6 +135,22 @@ app.get('/del-libro', (req, res) => {
 
 });
 
+app.get('/fetch-libro', (req, res) => {
+    libro.fetch('Giuseppe');
+
+    libro.on('fetch', (ele) => {
+        console.log('Libro Fetch');
+        console.log(libro.libro);
+    });
+
+    res.send('Libro Fetch');
+});
+
 app.get('/test', (req, res) => {
     res.send('Test');
 });
+
+app.get('/text-info', (req,res) => {
+    libroCollection.textinfo();
+    res.send('Text Info');
+})
