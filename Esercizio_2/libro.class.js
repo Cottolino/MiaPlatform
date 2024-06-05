@@ -81,6 +81,7 @@ class LibroCollection extends events.EventEmitter {
     }
     //Da eseguire dopo le azioni
     //Ok!
+    //Aggiorna la collection
     saveCollection()
     { 
         //API per salvare la collection
