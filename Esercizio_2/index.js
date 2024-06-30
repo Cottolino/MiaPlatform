@@ -10,10 +10,10 @@ const { MongoClient } = require('mongodb');
 const client = new MongoClient('mongodb+srv://giuseppe2:db_123@maestro-node.kumsrrs.mongodb.net/?retryWrites=true&w=majority&appName=maestro-node');
 
 const bodyParser = require('body-parser');
-const { LibroCollection, actionLib } = require('./libro.class');
+const { LibroCollection } = require('./libro.class');
 
 const libroCollection = new LibroCollection();
-const libro = new actionLib();
+// const libro = new actionLib();
 
 const port = 3000;
 
@@ -68,6 +68,12 @@ app.get('/libri', (req, res) => {
     }
 
     libroCollection.fetchCollection();
+
+    // libroColection.fetchCollection().then( () => {
+        
+    // }).catch();
+
+    // const libri = await libroCollection.fetchCollection();
 
     libroCollection.on('fetchCollection', (collection) => {
         console.log(libroCollection.collection);
@@ -153,4 +159,4 @@ app.get('/test', (req, res) => {
 app.get('/text-info', (req,res) => {
     libroCollection.textinfo();
     res.send('Text Info');
-})
+});

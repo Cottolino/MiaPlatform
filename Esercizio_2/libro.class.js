@@ -140,65 +140,65 @@ class LibroCollection extends events.EventEmitter {
 }
 
 //*************************DA CANCELLARE!!!*********************************** */
-class actionLib extends events.EventEmitter {
+// class actionLib extends events.EventEmitter {
 
-    // libro = new Libro('Il Signore degli Anelli', 'J.R.R. Tolkien');
-    libro;
-    dbLibro;
-    collectionLibro;
+//     // libro = new Libro('Il Signore degli Anelli', 'J.R.R. Tolkien');
+//     libro;
+//     dbLibro;
+//     collectionLibro;
     
-    constructor() {
-        super();
-        // this.dbURI = 'mongodb+srv://giuseppe2:db_123@maestro-node.kumsrrs.mongodb.net/?retryWrites=true&w=majority&appName=maestro-node';
-        // this.client = new MongoClient(this.dbURI);
+//     constructor() {
+//         super();
+//         // this.dbURI = 'mongodb+srv://giuseppe2:db_123@maestro-node.kumsrrs.mongodb.net/?retryWrites=true&w=majority&appName=maestro-node';
+//         // this.client = new MongoClient(this.dbURI);
 
-        // this.run().catch(err => console.log('ErroreConnessione'+ err));
-    }
+//         // this.run().catch(err => console.log('ErroreConnessione'+ err));
+//     }
 
 
-    //*****************************DA RIFARE******************************************** */
+//     //*****************************DA RIFARE******************************************** */
 
-    //Connessione al database
-    async run()
-    {
-        this.client.connect();
-        this.dbLibro = this.client.db('MiaLibri');
-        this.collectionLibro = this.dbLibro.collection('libri');
+//     //Connessione al database
+//     async run()
+//     {
+//         this.client.connect();
+//         this.dbLibro = this.client.db('MiaLibri');
+//         this.collectionLibro = this.dbLibro.collection('libri');
 
-    }
+//     }
 
-    //Da eseguire prima delle azioni
-    async fetch(titolo)
-    {
-        //API per recuperare il libro
+//     //Da eseguire prima delle azioni
+//     async fetch(titolo)
+//     {
+//         //API per recuperare il libro
 
-        //API interna
-        const cursor = await this.collectionLibro.find({titolo: titolo});
-        this.libro = await cursor.next();
-        this.emit('fetch', this.libro);
-    }
-    //Da eseguire dopo le azioni
-    save()
-    {
-        //API per salvare il libro
-        this.collectionLibro.updateOne({_id: this.libro._id},{$set: {titolo: this.libro.titolo, autore: this.libro.autore, prestito: this.libro.prestito, reso: this.libro.reso}});
-        this.emit('save', this.libro);
-    }
-    prestito(libro)
-    {
-        this.collectionLibro.updateOne({_id: libro._id},{$set: {prestito: true, reso: false}});
-        this.emit('prestito', this.libro);
-    }
-    reso()
-    {
-        this.collectionLibro.updateOne({_id: libro._id},{$set: {prestito: false, reso: true}});
-        this.emit('reso', this.libro);
-    }
-    info()
-    {
-        this.emit('info', this.libro);
-    }
-}
+//         //API interna
+//         const cursor = await this.collectionLibro.find({titolo: titolo});
+//         this.libro = await cursor.next();
+//         this.emit('fetch', this.libro);
+//     }
+//     //Da eseguire dopo le azioni
+//     save()
+//     {
+//         //API per salvare il libro
+//         this.collectionLibro.updateOne({_id: this.libro._id},{$set: {titolo: this.libro.titolo, autore: this.libro.autore, prestito: this.libro.prestito, reso: this.libro.reso}});
+//         this.emit('save', this.libro);
+//     }
+//     prestito(libro)
+//     {
+//         this.collectionLibro.updateOne({_id: libro._id},{$set: {prestito: true, reso: false}});
+//         this.emit('prestito', this.libro);
+//     }
+//     reso()
+//     {
+//         this.collectionLibro.updateOne({_id: libro._id},{$set: {prestito: false, reso: true}});
+//         this.emit('reso', this.libro);
+//     }
+//     info()
+//     {
+//         this.emit('info', this.libro);
+//     }
+// }
 
 class Libro
 {
@@ -229,4 +229,4 @@ class Libro
     
 }
 
-module.exports = { LibroCollection, actionLib, Libro };
+module.exports = { LibroCollection, Libro };
