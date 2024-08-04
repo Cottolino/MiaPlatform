@@ -54,7 +54,9 @@ class LibroCollection extends events.EventEmitter {
     async run()
     {
         this.client.connect();
+        //Database
         this.dbLibro = this.client.db('MiaLibri');
+        //Collection
         this.collectionLibro = this.dbLibro.collection('libri');
 
     }
