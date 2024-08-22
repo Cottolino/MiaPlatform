@@ -8,6 +8,7 @@ describe('Todos API', () => {
             .expect('Content-Type', /json/).expect(200).then(response => {
                 expect(response.body).toEqual(expect.arrayContaining([
                     expect.objectContaining({
+                        id : expect.any(Number),
                         name: expect.any(String),
                         completed: expect.any(Boolean)
                     })
@@ -21,6 +22,7 @@ describe('Todos API', () => {
         .expect('Content-Type', /json/).expect(200).then(response => {
             expect(response.body).toEqual(
                 expect.objectContaining({
+                    id : expect.any(Number),
                     name: expect.any(String),
                     completed: expect.any(Boolean)
                 })
@@ -45,7 +47,7 @@ describe('Todos API', () => {
         });
     });
 
-    it('GET /todos --> validates request body', () => {
+    it('POST /todos --> validates request body', () => {
         return request(app).post('/todos').send({ name: 123 }).expect(422);
     });
 
